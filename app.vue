@@ -2,7 +2,7 @@
   <div style="padding: 10px;display: flex;">
     <NForm ref="formRef" :model="form" :rules="rules" label-placement="left" label-width="auto" style="width: 200px;">
       <NFormItem path="email">
-        <NInput v-model="form.email" placeholder="请输入邮箱" clearable />
+        <NInput v-model:value="form.email" placeholder="请输入邮箱" clearable />
       </NFormItem>
     </NForm>
     <NButton style="margin-left: 10px;" @click="goValdate">验证</NButton>
@@ -22,16 +22,20 @@ const rules = reactive({
     {
       required: true,
       validator: (rule: any, value: any) => {
-        console.log('BUG取不到值', value)
-        return true
+        if (!value) {
+          return new Error('请填写内容')
+        } else {
+          return true
+        }
       },
       trigger: ['input', 'blur']
     }
   ]
 })
 
-const goValdate = () => {
-  formRef.value.validator((val: any) => {
+const goValdate = (e: MouseEvent) => {
+  e.preventDefault()
+  formRef.value.validate((val: any) => {
     if (!val) return
   })
 }
